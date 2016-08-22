@@ -1,10 +1,8 @@
 package com.zezooz.videorecorder;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import android.os.Environment;
 import android.util.Log;
@@ -126,7 +125,21 @@ public class RecordVideo extends Activity
             e.printStackTrace();
         }
         setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK, mCamera);
+        setFocusMode();
         mCamera.startPreview();
+    }
+
+    private void setFocusMode(){
+        Camera.Parameters parameters = mCamera.getParameters();
+        List<String> allFocus = parameters.getSupportedFocusModes();
+        if(allFocus.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)){
+            parameters.setFocusMode(
+                    Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        }
+        else if(allFocus.contains(Camera.Parameters.FLASH_MODE_AUTO)){
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
+        mCamera.setParameters(parameters);
     }
 
     public static void setCameraDisplayOrientation(Activity activity,
